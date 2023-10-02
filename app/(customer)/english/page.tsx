@@ -1,10 +1,8 @@
 import ButtonLink from "@/components/ButtonLink";
-import dbConnect from "@/lib/mongodb";
-import ServiceModel, { Service } from "@/models/service";
+import { getAllServices } from "@/lib/dbMethods";
 
 export default async function English() {
-  await dbConnect();
-  const services = (await ServiceModel.find({})) as Service[];
+  const services = await getAllServices();
   const serviceNames = services.map((service) => service.name.en);
 
   return (

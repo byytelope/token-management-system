@@ -1,12 +1,14 @@
-import { convertToSlugList } from "@/lib/utils";
-import dbConnect from "@/lib/mongodb";
-import ServiceModel, { IService, Service } from "@/models/service";
 import ButtonLink from "@/components/ButtonLink";
+import { getAllServices, getServiceWhere } from "@/lib/dbMethods";
+import {
+  convertToSlugList,
+  dispenseToken,
+  getChildServices,
+} from "@/lib/utils";
+import { IService } from "@/models/service";
 
 export async function generateStaticParams() {
-  await dbConnect();
-  const services = (await ServiceModel.find({})) as Service[];
-
+  const services = await getAllServices();
   return convertToSlugList(services);
 }
 
@@ -15,16 +17,13 @@ export default async function Service({
 }: {
   params: { services: string[] };
 }) {
-  await dbConnect();
-  const service = (await ServiceModel.where({}).findOne({
+  const service = await getServiceWhere({
     name: { en: decodeURIComponent(services[0]) },
-  })) as Service;
+  });
+  const childServices = getChildServices(service as IService, services);
 
-  console.log(service);
-
-  const childServices = service.children as IService[];
-  if (service!.children.length <= 0) {
-    console.log("Token dispensed.");
+  if (childServices.length === 0) {
+    await dispenseToken(services[services.length - 1]);
   }
 
   return (

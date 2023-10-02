@@ -1,4 +1,4 @@
-import { Document, Schema, model, models } from "mongoose";
+import { Document, Model, Schema, model, models } from "mongoose";
 
 export interface IService {
   name: {
@@ -17,6 +17,7 @@ serviceSchema.add({
   children: { type: Schema.Types.Mixed, required: true },
 });
 
-const ServiceModel = models.Service || model<Service>("Service", serviceSchema);
+const ServiceModel: Model<IService> =
+  models.Service || model<Service>("Service", serviceSchema);
 
 export default ServiceModel;

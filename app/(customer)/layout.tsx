@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
-import "./globals.css";
+import "../globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 const faruma = localFont({
-  src: "./faruma.otf",
+  src: "../faruma.otf",
   display: "swap",
   variable: "--font-faruma",
 });

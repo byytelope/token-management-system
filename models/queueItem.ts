@@ -1,14 +1,21 @@
-import { Document, Schema, Types, model, models } from "mongoose";
+import { Document, Model, Schema, Types, model, models } from "mongoose";
 
-export interface QueueItem extends Document {
+export interface QueueItem {
   queueNumber: number;
-  service: Types.ObjectId;
+  serviceName: string;
 }
 
-export const queueItemSchema = new Schema<QueueItem>({
-  queueNumber: { type: Number, required: true },
-  service: { type: Schema.Types.ObjectId, required: true },
-});
+export interface IQueueItem extends Document, QueueItem {}
 
-export default models.QueueItem ||
-  model<QueueItem>("QueueItem", queueItemSchema);
+export const queueItemSchema = new Schema<QueueItem>(
+  {
+    queueNumber: { type: Number, required: true },
+    serviceName: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+const QueueItemModel: Model<IQueueItem> =
+  models.QueueItem || model<QueueItem>("QueueItem", queueItemSchema);
+
+export default QueueItemModel;

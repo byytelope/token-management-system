@@ -6,6 +6,7 @@ interface ButtonLinkProps extends React.ComponentPropsWithRef<typeof Link> {
 
 export default function ButtonLink({
   dhivehi = false,
+  
   ...props
 }: ButtonLinkProps) {
   return (
