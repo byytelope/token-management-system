@@ -1,9 +1,11 @@
 import ButtonLink from "@/components/ButtonLink";
-import { getAllServices } from "@/lib/dbMethods";
+import { supabase } from "@/lib/supabase";
 
 export default async function English() {
-  const services = await getAllServices();
-  const serviceNames = services.map((service) => service.name.en);
+  const { data } = await supabase.from("services").select("name->en");
+  const serviceNames = data!.map((service) => {
+    return service.en as string;
+  });
 
   return (
     <>

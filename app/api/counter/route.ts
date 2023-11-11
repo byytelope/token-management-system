@@ -11,12 +11,12 @@ export async function POST(req: Request) {
   } catch (e) {
     return NextResponse.json(
       { error: "An error occurred while initializing counters" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const counters = await getAllCounters();
     const countersJSON = [];
@@ -30,7 +30,7 @@ export async function GET(req: Request) {
   } catch (e) {
     return NextResponse.json(
       { error: "An error occurred while fetching counters" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -45,7 +45,7 @@ export async function PUT(req: Request) {
   } catch (e) {
     return NextResponse.json(
       { error: "An error occurred while updating counter" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

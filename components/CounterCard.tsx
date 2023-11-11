@@ -7,6 +7,18 @@ import { startTransition } from "react";
 export default function CounterCard({ counter }: { counter: Counter }) {
   const router = useRouter();
   const nextQueueNum = async () => {
+    // const queueHistory = counter.queueHistory;
+
+    // const nextQueueItemRes = await fetch("/api/queue");
+
+    // const updateRes = await fetch("/api/counter", {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ id: counter._id, update: { queueHistory } }),
+    // });
+
     startTransition(() => {
       router.refresh();
     });
@@ -56,7 +68,9 @@ export default function CounterCard({ counter }: { counter: Counter }) {
           {counter.isOpen ? "Open" : "Closed"}
         </div>
       </div>
-      <span>Token number: {`${counter.queueHistory[0]?.queueNumber}`}</span>
+      <span>
+        Token number: {`${counter.queueHistory[0]?.queueNumber ?? 0}`}
+      </span>
       <span className="flex flex-col gap-4">
         <button
           onClick={nextQueueNum}

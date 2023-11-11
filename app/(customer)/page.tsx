@@ -1,6 +1,6 @@
 import ButtonLink from "@/components/ButtonLink";
 
-export default function Home() {
+export default async function Home() {
   return (
     <main className="flex flex-col flex-grow justify-between items-center w-full h-full py-24 px-32">
       <h1>Welcome to AIMS Diagnostic Care Token System</h1>

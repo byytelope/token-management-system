@@ -1,14 +1,19 @@
-import { IService } from "@/models/service";
-import { addQueueItem, getFirstQueueItem } from "./dbMethods";
+export interface Service {
+  id?: string;
+  name: {
+    [lang: string]: string;
+  };
+  children: Service[];
+}
 
 export function convertToSlugList(
-  input: IService[],
-  parentSlugs: string[] = []
+  input: Service[],
+  parentSlugs: string[] = [],
 ): { slug: string[] }[] {
   const result: { slug: string[] }[] = [];
 
   for (const service of input) {
-    const currentSlugs = [...parentSlugs, encodeURIComponent(service.name.en)];
+    const currentSlugs = [...parentSlugs, encodeURIComponent(service.name!.en)];
 
     result.push({ slug: currentSlugs });
 
@@ -22,11 +27,11 @@ export function convertToSlugList(
 }
 
 export function getChildServices(
-  service: IService,
-  urlArray: string[]
-): IService[] {
+  service: Service,
+  urlArray: string[],
+): Service[] {
   let current = service;
-  let childServices: IService[] = [];
+  let childServices: Service[] = [];
 
   if (urlArray.length <= 1) {
     return current.children;
@@ -35,7 +40,7 @@ export function getChildServices(
   for (const name of urlArray) {
     const decodedName = decodeURIComponent(name);
     const matchingChild = current.children.find(
-      (child) => child.name.en === decodedName
+      (child) => child.name.en === decodedName,
     );
 
     if (!matchingChild) {
@@ -50,12 +55,13 @@ export function getChildServices(
 }
 
 export async function dispenseToken(serviceName: string) {
-  const firstQueueItem = await getFirstQueueItem();
-  console.log(firstQueueItem);
-  const queueNumber = (firstQueueItem?.queueNumber || 0) + 1;
-  await addQueueItem(queueNumber, serviceName);
+  // const firstQueueItem = await getFirstQueueItem();
+  // console.log(firstQueueItem);
+  // const queueNumber = (firstQueueItem?.queueNumber || 0) + 1;
+  // await addQueueItem(queueNumber, serviceName);
+  const queueNumber = 0;
 
   console.log(
-    `Token dispensed - ${decodeURIComponent(serviceName)} | ${queueNumber}`
+    `Token dispensed - ${decodeURIComponent(serviceName)} | ${queueNumber}`,
   );
 }

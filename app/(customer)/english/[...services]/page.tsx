@@ -1,15 +1,18 @@
 import ButtonLink from "@/components/ButtonLink";
-import { getAllServices, getServiceWhere } from "@/lib/dbMethods";
+import { supabase } from "@/lib/supabase";
 import {
   convertToSlugList,
   dispenseToken,
   getChildServices,
+  Service,
 } from "@/lib/utils";
-import { IService } from "@/models/service";
 
 export async function generateStaticParams() {
-  const services = await getAllServices();
-  return convertToSlugList(services);
+  const { data: services } = await supabase
+    .from("services")
+    .select("*")
+    .returns<Service[]>();
+  return convertToSlugList(services!);
 }
 
 export default async function Service({
@@ -17,11 +20,13 @@ export default async function Service({
 }: {
   params: { services: string[] };
 }) {
-  const service = await getServiceWhere({
-    name: { en: decodeURIComponent(services[0]) },
-  });
-  const childServices = getChildServices(service as IService, services);
+  const { data } = await supabase
+    .from("services")
+    .select("*")
+    .eq("name->>en", decodeURIComponent(services[0]))
+    .returns<Service[]>();
 
+  const childServices = getChildServices(data![0], services);
   if (childServices.length === 0) {
     await dispenseToken(services[services.length - 1]);
   }
