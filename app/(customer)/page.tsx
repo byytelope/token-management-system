@@ -10,9 +10,7 @@ export default async function Home() {
           ދިވެހި
         </ButtonLink>
       </div>
-      <h1 className="font-faruma">
-        އެއިމްސް ޑައިގްނޯސްޓިކް ކެއަރ ޓޯކެން ޙިދުމަތަށް މަރުޙަބާ
-      </h1>
+      <h1 className="font-faruma">އެއިމްސް ޑައިގްނޯސްޓިކް ކެއަރ ޓޯކެން ޙިދުމަތަށް މަރުޙަބާ</h1>
     </main>
   );
 }

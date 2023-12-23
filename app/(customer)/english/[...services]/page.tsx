@@ -1,35 +1,13 @@
 import ButtonLink from "@/components/ButtonLink";
-import { supabase } from "@/lib/supabase";
-import {
-  convertToSlugList,
-  dispenseToken,
-  getChildServices,
-  Service,
-} from "@/lib/utils";
-
-export async function generateStaticParams() {
-  const { data: services } = await supabase
-    .from("services")
-    .select("*")
-    .returns<Service[]>();
-  return convertToSlugList(services!);
-}
+import { getChildServices } from "@/lib/actions";
+import { Service } from "@/lib/utils";
 
 export default async function Service({
   params: { services },
 }: {
   params: { services: string[] };
 }) {
-  const { data } = await supabase
-    .from("services")
-    .select("*")
-    .eq("name->>en", decodeURIComponent(services[0]))
-    .returns<Service[]>();
-
-  const childServices = getChildServices(data![0], services);
-  if (childServices.length === 0) {
-    await dispenseToken(services[services.length - 1]);
-  }
+  const childServices = await getChildServices(services);
 
   return (
     <>

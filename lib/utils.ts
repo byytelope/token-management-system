@@ -1,15 +1,9 @@
-export interface Service {
-  id?: string;
-  name: {
-    [lang: string]: string;
-  };
-  children: Service[];
-}
+import { Service } from "./types";
 
-export function convertToSlugList(
+export const convertToSlugList = (
   input: Service[],
   parentSlugs: string[] = [],
-): { slug: string[] }[] {
+): { slug: string[] }[] => {
   const result: { slug: string[] }[] = [];
 
   for (const service of input) {
@@ -24,17 +18,21 @@ export function convertToSlugList(
   }
 
   return result;
-}
+};
 
-export function getChildServices(
+export const extractChildServices = (
   service: Service,
   urlArray: string[],
-): Service[] {
+): Service[] => {
   let current = service;
   let childServices: Service[] = [];
 
   if (urlArray.length <= 1) {
     return current.children;
+  }
+
+  if (service === undefined) {
+    return [];
   }
 
   for (const name of urlArray) {
@@ -52,16 +50,4 @@ export function getChildServices(
   }
 
   return childServices;
-}
-
-export async function dispenseToken(serviceName: string) {
-  // const firstQueueItem = await getFirstQueueItem();
-  // console.log(firstQueueItem);
-  // const queueNumber = (firstQueueItem?.queueNumber || 0) + 1;
-  // await addQueueItem(queueNumber, serviceName);
-  const queueNumber = 0;
-
-  console.log(
-    `Token dispensed - ${decodeURIComponent(serviceName)} | ${queueNumber}`,
-  );
-}
+};
