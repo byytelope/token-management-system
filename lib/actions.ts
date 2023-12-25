@@ -3,16 +3,7 @@
 import { extractChildServices } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { Service } from "./types";
-import { createServerClient } from "@supabase/ssr";
-import { Database } from "./supabaseTypes";
-
-const supabase = createServerClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
-  {
-    cookies: {},
-  },
-);
+import { supabase } from "./supabase";
 
 export const getChildServices = async (services: string[]) => {
   "use server";

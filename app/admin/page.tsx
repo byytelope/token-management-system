@@ -1,19 +1,10 @@
 import Counters from "@/components/Counters";
-import { Database } from "@/lib/supabaseTypes";
+import { supabase } from "@/lib/supabase";
 import { Counter } from "@/lib/types";
-import { createServerClient } from "@supabase/ssr";
 
 export const revalidate = 0;
 
 export default async function Admin() {
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
-    {
-      cookies: {},
-    },
-  );
-
   const { data: counters } = await supabase
     .from("counters")
     .select("*")

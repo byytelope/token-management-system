@@ -1,16 +1,7 @@
 import ButtonLink from "@/components/ButtonLink";
-import { Database } from "@/lib/supabaseTypes";
-import { createServerClient } from "@supabase/ssr";
+import { supabase } from "@/lib/supabase";
 
 export default async function English() {
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
-    {
-      cookies: {},
-    },
-  );
-
   const { data } = await supabase.from("services").select("name->en");
   const serviceNames = data!.map((service) => {
     return service.en as string;
