@@ -22,7 +22,8 @@ export default function CounterCard({ counter }: { counter: Counter }) {
           onClick={async () => {
             await nextQueueNum(counter.id);
           }}
-          className="p-2 bg-gray-300 rounded w-full"
+          className="p-2 bg-gray-300 rounded w-full disabled:bg-gray-200 disabled:text-gray-400"
+          disabled={!counter.isOpen}
         >
           Next
         </button>

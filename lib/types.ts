@@ -11,4 +11,5 @@ export interface Counter {
   counterNumber: number;
   isOpen: boolean;
   queueHistory: string[];
+  serviceIds: string[];
 }
