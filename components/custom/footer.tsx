@@ -1,18 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Button } from "../ui/button";
 
 export default function Footer() {
   const router = useRouter();
 
   return (
     <footer className="h-48 px-32 flex justify-between items-center">
-      <button
+      <Button
+        variant="secondary"
         onClick={() => router.back()}
-        className="bg-gray-200 h-24 w-24 rounded-full"
+        className="h-24 w-24 text-5xl rounded-full"
       >
         {"<-"}
-      </button>
+      </Button>
       <div>AIMS</div>
     </footer>
   );

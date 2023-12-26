@@ -1,4 +1,4 @@
-import ButtonLink from "@/components/ButtonLink";
+import ButtonLink from "@/components/custom/button-link";
 import { supabase } from "@/lib/supabase";
 
 export default async function English() {

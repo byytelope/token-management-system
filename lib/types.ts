@@ -8,7 +8,7 @@ export interface Service {
 
 export interface Counter {
   id: string;
-  counterNumber: number;
+  name: string;
   isOpen: boolean;
   queueHistory: string[];
   serviceIds: string[];

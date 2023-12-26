@@ -1,6 +1,6 @@
-import ButtonLink from "@/components/ButtonLink";
+import ButtonLink from "@/components/custom/button-link";
 import { getChildServices } from "@/lib/actions";
-import { Service } from "@/lib/utils";
+import { Service } from "@/lib/types";
 
 export default async function Service({
   params: { services },

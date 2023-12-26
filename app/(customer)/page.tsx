@@ -1,4 +1,4 @@
-import ButtonLink from "@/components/ButtonLink";
+import ButtonLink from "@/components/custom/button-link";
 
 export default async function Home() {
   return (
@@ -7,10 +7,10 @@ export default async function Home() {
       <div className="grid grid-cols-2 gap-16 w-full">
         <ButtonLink href="/english">English</ButtonLink>
         <ButtonLink dhivehi href="/english">
-          ދިވެހި
+          ދވހ
         </ButtonLink>
       </div>
-      <h1 className="font-faruma">އެއިމްސް ޑައިގްނޯސްޓިކް ކެއަރ ޓޯކެން ޙިދުމަތަށް މަރުޙަބާ</h1>
+      <h1 className="font-faruma">އއމސ ޑއގނސޓކކ ކއރ ޓކނ ޙދމތށ މރޙބ</h1>
     </main>
   );
 }
