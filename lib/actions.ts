@@ -29,6 +29,10 @@ export const dispenseToken = async (serviceName: string) => {
   await new Promise((resolve) => setTimeout(resolve, 2000));
 };
 
+export const addCounter = async () => {
+  await supabase.from("counters").insert({ serviceIds: [] }).select();
+};
+
 export const openCounter = async (counterId: string) => {
   await supabase.from("counters").update({ isOpen: true }).eq("id", counterId);
 };

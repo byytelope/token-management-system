@@ -11,7 +11,7 @@ export interface Database {
     Tables: {
       counters: {
         Row: {
-          name: string;
+          counterNumber: number;
           createdAt: string;
           id: string;
           isOpen: boolean;
@@ -19,7 +19,7 @@ export interface Database {
           serviceIds: string[];
         };
         Insert: {
-          name: string;
+          counterNumber?: number;
           createdAt?: string;
           id?: string;
           isOpen?: boolean;
@@ -27,7 +27,7 @@ export interface Database {
           serviceIds: string[];
         };
         Update: {
-          name?: string;
+          counterNumber?: number;
           createdAt?: string;
           id?: string;
           isOpen?: boolean;
