@@ -4,6 +4,7 @@ export interface Service {
     [lang: string]: string;
   };
   children: Service[];
+  tokenPrefix: string;
 }
 
 export interface Counter {

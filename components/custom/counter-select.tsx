@@ -1,5 +1,9 @@
 "use client";
 
+import { Counter } from "@/lib/types";
+import { Button } from "../ui/button";
+import { addCounter } from "@/lib/actions";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
 import {
   Select,
   SelectContent,
@@ -8,17 +12,38 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Counter } from "@/lib/types";
-import { Button } from "../ui/button";
-import { addCounter } from "@/lib/actions";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
+} from "../ui/select";
 import { Separator } from "../ui/separator";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback } from "react";
 
-export default function CounterSelect({ counters }: { counters: Counter[] }) {
+export default function CounterSelect({
+  counters,
+}: {
+  counters: Counter[];
+}) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams],
+  );
+
   return (
-    <Select>
-      <SelectTrigger className="w-[180px]">
+    <Select
+      defaultValue={searchParams.get("id") ?? ""}
+      onValueChange={(id) => {
+        router.push(`${pathname}?${createQueryString("id", id)}`);
+      }}
+    >
+      <SelectTrigger className="w-40">
         <SelectValue placeholder="Select a counter" />
       </SelectTrigger>
       <SelectContent>

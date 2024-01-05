@@ -25,7 +25,9 @@ export default function CounterLayout({
       <body className={`${inter.variable} min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />
-          {children}
+          <main className="px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow items-center">
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>
