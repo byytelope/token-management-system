@@ -6,8 +6,6 @@ import { Counter, Service } from "./types";
 import { supabase } from "./supabase";
 
 export const getChildServices = async (services: string[]) => {
-  "use server";
-
   const { data } = await supabase
     .from("services")
     .select("*")

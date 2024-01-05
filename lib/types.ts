@@ -14,3 +14,10 @@ export interface Counter {
   queueHistory: string[];
   serviceIds: string[];
 }
+
+export interface QueueItem {
+  id: string;
+  serviceId: string;
+  queueNumber: number;
+  createdAt: string;
+}

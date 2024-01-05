@@ -46,7 +46,7 @@ export interface Database {
         Insert: {
           createdAt?: string
           id?: string
-          queueNumber: number
+          queueNumber?: number
           serviceId?: string
         }
         Update: {
