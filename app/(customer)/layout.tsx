@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "../globals.css";
 import { ThemeProvider } from "@/components/custom/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,9 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${faruma.variable} text-5xl min-h-screen flex flex-col justify-between`}
+        className={`${inter.variable} ${faruma.variable} text-5xl xl:text-5xl font-medium min-h-[100dvh] flex flex-col justify-between`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Toaster richColors position="bottom-center" />
           {children}
         </ThemeProvider>
       </body>

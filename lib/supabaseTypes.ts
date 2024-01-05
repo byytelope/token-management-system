@@ -38,44 +38,50 @@ export interface Database {
       }
       queueItems: {
         Row: {
+          categoryId: string
           createdAt: string
           id: string
           queueNumber: number
-          serviceId: string
+          serviceName: string
         }
         Insert: {
+          categoryId?: string
           createdAt?: string
           id?: string
           queueNumber?: number
-          serviceId?: string
+          serviceName?: string
         }
         Update: {
+          categoryId?: string
           createdAt?: string
           id?: string
           queueNumber?: number
-          serviceId?: string
+          serviceName?: string
         }
         Relationships: []
       }
       services: {
         Row: {
-          children: Json[]
+          childrenIds: string[]
           createdAt: string
           id: string
+          level: number
           name: Json
           tokenPrefix: string
         }
         Insert: {
-          children?: Json[]
+          childrenIds: string[]
           createdAt?: string
           id?: string
+          level?: number
           name?: Json
           tokenPrefix?: string
         }
         Update: {
-          children?: Json[]
+          childrenIds?: string[]
           createdAt?: string
           id?: string
+          level?: number
           name?: Json
           tokenPrefix?: string
         }

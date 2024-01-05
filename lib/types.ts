@@ -1,10 +1,11 @@
 export interface Service {
-  id?: string;
+  id: string;
   name: {
     [lang: string]: string;
   };
-  children: Service[];
+  childrenIds: string[];
   tokenPrefix: string;
+  level: number;
 }
 
 export interface Counter {
@@ -17,7 +18,8 @@ export interface Counter {
 
 export interface QueueItem {
   id: string;
-  serviceId: string;
+  categoryId: string;
+  serviceName: string;
   queueNumber: number;
   createdAt: string;
 }

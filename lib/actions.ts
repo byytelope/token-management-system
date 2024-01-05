@@ -1,30 +1,14 @@
 "use server";
 
-import { extractChildServices } from "@/lib/utils";
-import { redirect } from "next/navigation";
 import { Counter, Service } from "./types";
 import { supabase } from "./supabase";
 
-export const getChildServices = async (services: string[]) => {
-  const { data } = await supabase
-    .from("services")
-    .select("*")
-    .eq("name->>en", decodeURIComponent(services[0]))
-    .returns<Service[]>();
-
-  const childServices = extractChildServices(data![0], services);
-
-  if (childServices.length === 0) {
-    redirect(`/english/dispense/${services[services.length - 1]}`);
-  }
-
-  return childServices;
-};
-
-export const dispenseToken = async (serviceName: string) => {
-  const queueNumber = 0;
-  console.log(`Token dispensed - ${serviceName} | ${queueNumber}`);
+export const dispenseToken = async (
+  categoryId: string,
+  serviceName: string,
+) => {
   await new Promise((resolve) => setTimeout(resolve, 2000));
+  return `Token dispensed - ${serviceName} | 0`;
 };
 
 export const getAllCounters = async () => {
@@ -36,12 +20,26 @@ export const getAllCounters = async () => {
   return counters;
 };
 
-export const getAllServices = async () => {
+export const getAllServices = async (columns?: Array<keyof Service>) => {
   const { data: services } = await supabase
     .from("services")
-    .select("*")
+    .select(columns != null ? columns.join() : "*")
+    .eq("level", 1)
     .returns<Service[]>();
-  return services;
+  return services ?? [];
+};
+
+export const getServiceById = async (
+  serviceId: string,
+  columns?: Array<keyof Service>,
+) => {
+  const { data } = await supabase
+    .from("services")
+    .select(columns != null ? columns.join() : "*")
+    .eq("id", serviceId)
+    .returns<Partial<Service[]>>();
+
+  if (data != null) return data[0];
 };
 
 export const addCounter = async () => {

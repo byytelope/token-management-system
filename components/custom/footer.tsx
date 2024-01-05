@@ -7,7 +7,7 @@ export default function Footer() {
   const router = useRouter();
 
   return (
-    <footer className="h-48 px-32 flex justify-between items-center">
+    <footer className="fixed bottom-0 left-0 w-full h-fit py-8 xl:py-12 bg-background/20 backdrop-blur px-12 xl:px-32 flex justify-between items-center">
       <Button
         variant="secondary"
         onClick={() => router.back()}
