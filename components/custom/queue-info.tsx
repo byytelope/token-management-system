@@ -35,11 +35,19 @@ export default function QueueInfo() {
   useEffect(() => {
     const channel = supabase
       .channel("queue-update-channel")
-      .on(
+      .on<QueueItem>(
         "postgres_changes",
         { event: "*", schema: "public", table: "queueItems" },
         (payload) => {
           console.log("Change received!", payload);
+          setQueueItems((oldQueueItems) => {
+            const newQueueItem = payload.new as QueueItem;
+            const updateQueueItems = oldQueueItems.map((q) =>
+              q.id === newQueueItem.id ? newQueueItem : q,
+            );
+
+            return updateQueueItems;
+          });
           router.refresh();
         },
       )
@@ -51,13 +59,13 @@ export default function QueueInfo() {
   }, [router, supabase]);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full @container">
       <CardHeader>
         <CardTitle>Queue</CardTitle>
         <CardDescription>Upcoming numbers</CardDescription>
         <Separator />
       </CardHeader>
-      <CardContent className="grid grid-cols-3 gap-4">
+      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @2xl:grid-cols-4 @4xl:grid-cols-5 gap-4">
         {queueItems.map((item) => (
           <div key={item.id} className="rounded-lg border p-4">
             <p className="font-semibold text-sm">{item.queueNumber}</p>
