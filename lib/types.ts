@@ -12,14 +12,14 @@ export interface Counter {
   id: string;
   counterNumber: number;
   isOpen: boolean;
-  queueHistory: string[];
-  serviceIds: string[];
+  queueHistory: { queueNumber: string; serviceName: string }[];
+  categoryIds: string[];
 }
 
 export interface QueueItem {
   id: string;
   categoryId: string;
   serviceName: string;
-  queueNumber: number;
+  queueNumber: string;
   createdAt: string;
 }

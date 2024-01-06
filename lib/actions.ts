@@ -1,17 +1,27 @@
 "use server";
 
-import { Counter, Service } from "./types";
+import { Counter, QueueItem, Service } from "./types";
 import { supabase } from "./supabase";
+import { unstable_noStore as noStore } from "next/cache";
 
 export const dispenseToken = async (
   categoryId: string,
   serviceName: string,
 ) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  return `Token dispensed - ${serviceName} | 0`;
+  const { error } = await supabase
+    .from("queueItems")
+    .insert({ categoryId, serviceName });
+
+  if (error) {
+    console.log(error);
+    return error.message;
+  } else {
+    return `Token dispensed - ${serviceName}`;
+  }
 };
 
 export const getAllCounters = async () => {
+  noStore();
   const { data: counters } = await supabase
     .from("counters")
     .select("*")
@@ -43,7 +53,14 @@ export const getServiceById = async (
 };
 
 export const addCounter = async () => {
-  await supabase.from("counters").insert({ serviceIds: [] }).select();
+  const { data } = await supabase
+    .from("counters")
+    .insert({ categoryIds: [] })
+    .select("*")
+    .limit(1)
+    .single<Counter>();
+
+  return data;
 };
 
 export const updateCounter = async (
@@ -53,6 +70,39 @@ export const updateCounter = async (
   await supabase.from("counters").update(update).eq("id", counterId);
 };
 
-export const nextQueueNum = async (counterId: string) => {
-  // await supabase.from("counters").update({queueHistory})
+export const getAllQueueItems = async () => {
+  noStore();
+  const { data } = await supabase
+    .from("queueItems")
+    .select("*")
+    .returns<QueueItem[]>();
+
+  return data;
+};
+
+export const nextQueueNum = async (counter: Counter) => {
+  noStore();
+  const { data: queueItem } = await supabase
+    .from("queueItems")
+    .select("*")
+    .in("categoryId", counter.categoryIds)
+    .limit(1)
+    .single<QueueItem>();
+
+  if (queueItem == null) return;
+
+  await supabase
+    .from("counters")
+    .update({
+      queueHistory: [
+        {
+          queueNumber: queueItem.queueNumber,
+          serviceName: queueItem.serviceName,
+        },
+        ...counter.queueHistory,
+      ],
+    })
+    .eq("id", counter.id);
+
+  await supabase.from("queueItems").delete().eq("id", queueItem.id);
 };

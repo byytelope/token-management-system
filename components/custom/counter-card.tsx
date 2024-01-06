@@ -2,7 +2,7 @@
 
 import { Counter, Service } from "@/lib/types";
 import { Button } from "../ui/button";
-import { updateCounter } from "@/lib/actions";
+import { nextQueueNum, updateCounter } from "@/lib/actions";
 import {
   Card,
   CardContent,
@@ -23,13 +23,13 @@ export default function CounterCard({
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
 
   useEffect(() => {
-    if (counter) setSelectedServiceIds(counter!.serviceIds);
+    if (counter) setSelectedServiceIds(counter!.categoryIds);
   }, [counter]);
 
   return (
     <>
       {counter != null && (
-        <Card className="w-full">
+        <Card className="w-full h-full">
           <CardHeader>
             <div className="flex w-full justify-between">
               <div className="flex flex-col gap-2">
@@ -49,7 +49,7 @@ export default function CounterCard({
                   variant="destructive"
                   className={counter.isOpen ? "" : "hidden"}
                   onClick={async () =>
-                    updateCounter(counter.id, { isOpen: false })
+                    await updateCounter(counter.id, { isOpen: false })
                   }
                 >
                   Close Counter
@@ -58,7 +58,7 @@ export default function CounterCard({
                   variant="outline"
                   className={counter.isOpen ? "hidden" : ""}
                   onClick={async () =>
-                    updateCounter(counter.id, { isOpen: true })
+                    await updateCounter(counter.id, { isOpen: true })
                   }
                 >
                   Open Counter
@@ -67,22 +67,33 @@ export default function CounterCard({
             </div>
             <Separator />
           </CardHeader>
-          <CardContent className="flex flex-col gap-8 items-center">
+          <CardContent className="flex flex-col gap-8 h-full items-center">
             <div className="flex flex-col items-center">
-              <p className="text-4xl font-bold">C1002</p>
-              <p className="text-xl font-light">Consultations</p>
+              <p className="text-4xl font-bold">
+                {counter.queueHistory[0]?.queueNumber ?? ""}
+              </p>
+              <p className="text-xl font-light">
+                {counter.queueHistory[0]?.serviceName ?? "-"}
+              </p>
             </div>
-            <Button variant="outline">Next Number</Button>
+            <Button
+              disabled={!counter.isOpen}
+              variant="outline"
+              onClick={async () => await nextQueueNum(counter)}
+            >
+              Next Number
+            </Button>
           </CardContent>
           <CardFooter className="flex flex-col gap-2 mt-4 items-start">
             <p className="text-sm">Select accepted services</p>
             <ToggleGroup
+              disabled={!counter.isOpen}
               type="multiple"
               className="flex flex-wrap justify-start"
               value={selectedServiceIds}
               onValueChange={async (values) => {
                 setSelectedServiceIds(values);
-                await updateCounter(counter.id, { serviceIds: values });
+                await updateCounter(counter.id, { categoryIds: values });
               }}
             >
               {services.map((service) => (

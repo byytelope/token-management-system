@@ -11,28 +11,28 @@ export interface Database {
     Tables: {
       counters: {
         Row: {
+          categoryIds: string[]
           counterNumber: number
           createdAt: string
           id: string
           isOpen: boolean
-          queueHistory: string[]
-          serviceIds: string[]
+          queueHistory: Json[]
         }
         Insert: {
+          categoryIds: string[]
           counterNumber?: number
           createdAt?: string
           id?: string
           isOpen?: boolean
-          queueHistory?: string[]
-          serviceIds: string[]
+          queueHistory?: Json[]
         }
         Update: {
+          categoryIds?: string[]
           counterNumber?: number
           createdAt?: string
           id?: string
           isOpen?: boolean
-          queueHistory?: string[]
-          serviceIds?: string[]
+          queueHistory?: Json[]
         }
         Relationships: []
       }
@@ -41,24 +41,32 @@ export interface Database {
           categoryId: string
           createdAt: string
           id: string
-          queueNumber: number
+          queueNumber: string
           serviceName: string
         }
         Insert: {
-          categoryId?: string
+          categoryId: string
           createdAt?: string
           id?: string
-          queueNumber?: number
+          queueNumber?: string
           serviceName?: string
         }
         Update: {
           categoryId?: string
           createdAt?: string
           id?: string
-          queueNumber?: number
+          queueNumber?: string
           serviceName?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "queueItems_categoryId_fkey"
+            columns: ["categoryId"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       services: {
         Row: {

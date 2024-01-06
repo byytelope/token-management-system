@@ -2,27 +2,22 @@
 
 import { Counter, Service } from "@/lib/types";
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
 import { Database } from "@/lib/supabaseTypes";
 import { Button } from "../ui/button";
 import { addCounter } from "@/lib/actions";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 import CounterSelect from "./counter-select";
 import CounterCard from "./counter-card";
+import { createQueryString } from "@/lib/utils";
+import QueueInfo from "./queue-info";
 
 export default function CounterArea({
   counters,
   services,
 }: { counters: Counter[]; services: Service[] }) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const counter = counters.find(
     (counter) => counter.id === searchParams.get("id"),
@@ -60,7 +55,14 @@ export default function CounterArea({
             className="gap-2 w-40"
             variant="outline"
             onClick={async () => {
-              await addCounter();
+              const counter = await addCounter();
+              router.push(
+                `${pathname}?${createQueryString(
+                  "id",
+                  counter!.id,
+                  searchParams,
+                )}`,
+              );
             }}
           >
             <PlusCircledIcon className="size-4" />
@@ -72,21 +74,8 @@ export default function CounterArea({
       </div>
       <div className="flex gap-4">
         <CounterCard counter={counter} services={services} />
-        <QueueInfoCard />
+        <QueueInfo />
       </div>
     </div>
-  );
-}
-
-function QueueInfoCard() {
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Upcoming Numbers</CardTitle>
-        <CardDescription></CardDescription>
-      </CardHeader>
-      <CardContent></CardContent>
-      <CardFooter className="gap-4"></CardFooter>
-    </Card>
   );
 }

@@ -15,7 +15,7 @@ import {
 } from "../ui/select";
 import { Separator } from "../ui/separator";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { createQueryString } from "@/lib/utils";
 
 export default function CounterSelect({
   counters,
@@ -26,21 +26,11 @@ export default function CounterSelect({
   const pathname = usePathname();
   const router = useRouter();
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams);
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-
   return (
     <Select
       defaultValue={searchParams.get("id") ?? ""}
       onValueChange={(id) => {
-        router.push(`${pathname}?${createQueryString("id", id)}`);
+        router.push(`${pathname}?${createQueryString("id", id, searchParams)}`);
       }}
     >
       <SelectTrigger className="w-40">

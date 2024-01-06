@@ -2,9 +2,21 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Service } from "./types";
 import { getAllServices, getServiceById } from "./actions";
+import { ReadonlyURLSearchParams } from "next/navigation";
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
+};
+
+export const createQueryString = (
+  name: string,
+  value: string,
+  searchParams: ReadonlyURLSearchParams,
+) => {
+  const params = new URLSearchParams(searchParams);
+  params.set(name, value);
+
+  return params.toString();
 };
 
 export const getChildServices = async (serviceId: string) => {

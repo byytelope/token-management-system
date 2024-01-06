@@ -16,6 +16,7 @@ export default async function Home() {
             href={language.href}
             animationDelay={i}
             key={i + language.href}
+            dhivehi={language.name === "ދިވެހި"}
           >
             {language.name}
           </ButtonLink>
