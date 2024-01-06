@@ -18,6 +18,7 @@ export default function Service({
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("bruh");
       const cs = await getChildServices(
         serviceIds != null ? serviceIds[serviceIds.length - 1] : "",
       );
@@ -25,9 +26,7 @@ export default function Service({
       setChildServices(cs);
     };
 
-    return () => {
-      fetchData();
-    };
+    fetchData();
   }, [serviceIds]);
 
   return (

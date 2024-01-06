@@ -23,9 +23,7 @@ export default function Display() {
       setCounters(data ?? []);
     };
 
-    return () => {
-      fetchData();
-    };
+    fetchData();
   }, [counters]);
 
   useEffect(() => {

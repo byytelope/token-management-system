@@ -29,9 +29,7 @@ export default function QueueInfo() {
       setQueueItems(data ?? []);
     };
 
-    return () => {
-      fetchData();
-    };
+    fetchData();
   }, [queueItems]);
 
   useEffect(() => {
