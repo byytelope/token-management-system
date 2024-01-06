@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${faruma.variable} text-5xl xl:text-5xl font-medium min-h-[100dvh] flex flex-col justify-between`}
+        className={`${inter.variable} ${faruma.variable} text-2xl md:text-5xl font-medium min-h-[100dvh] flex flex-col justify-between`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Toaster richColors position="bottom-center" />
