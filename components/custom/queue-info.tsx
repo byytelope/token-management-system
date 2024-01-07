@@ -11,12 +11,10 @@ import {
 import { Separator } from "../ui/separator";
 import { createBrowserClient } from "@supabase/ssr";
 import { Database } from "@/lib/supabaseTypes";
-import { useRouter } from "next/navigation";
 import { QueueItem } from "@/lib/types";
 import { getAllQueueItems } from "@/lib/actions";
 
 export default function QueueInfo() {
-  const router = useRouter();
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const supabase = createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,7 +28,7 @@ export default function QueueInfo() {
     };
 
     fetchData();
-  }, [queueItems]);
+  }, []);
 
   useEffect(() => {
     const channel = supabase
@@ -41,14 +39,19 @@ export default function QueueInfo() {
         (payload) => {
           console.log("Change received!", payload);
           setQueueItems((oldQueueItems) => {
-            const newQueueItem = payload.new as QueueItem;
-            const updateQueueItems = oldQueueItems.map((q) =>
-              q.id === newQueueItem.id ? newQueueItem : q,
-            );
+            if (payload.eventType === "INSERT") {
+              return [payload.new, ...oldQueueItems];
+            } else if (payload.eventType === "DELETE") {
+              const indexToDelete = oldQueueItems.findIndex(
+                (q) => q.id === payload.old.id,
+              );
+              if (indexToDelete !== -1) {
+                oldQueueItems.splice(indexToDelete, 1);
+              }
+            }
 
-            return updateQueueItems;
+            return oldQueueItems;
           });
-          router.refresh();
         },
       )
       .subscribe();
@@ -56,20 +59,29 @@ export default function QueueInfo() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [router, supabase]);
+  }, [supabase]);
 
   return (
-    <Card className="w-full @container">
-      <CardHeader>
+    <Card className="w-full relative @container overflow-hidden">
+      <CardHeader className="fixed w-full bg-background pb-0">
         <CardTitle>Queue</CardTitle>
         <CardDescription>Upcoming numbers</CardDescription>
         <Separator />
       </CardHeader>
-      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @2xl:grid-cols-4 @4xl:grid-cols-5 gap-4">
-        {queueItems.map((item) => (
-          <div key={item.id} className="rounded-lg border p-4">
-            <p className="font-semibold text-sm">{item.queueNumber}</p>
-            <p className="text-sm">{item.serviceName}</p>
+      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @2xl:grid-cols-4 @4xl:grid-cols-5 gap-4 pt-24 max-h-[60dvh] overflow-scroll">
+        {queueItems.map((item, i) => (
+          <div
+            key={item.id}
+            className="flex rounded-lg border p-4 animate-in fade-in duration-500 overflow-hidden"
+          >
+            <div className="flex items-center">
+              {i + 1}
+              <Separator orientation="vertical" className="mx-4" />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">{item.queueNumber}</p>
+              <p className="text-sm">{item.serviceName}</p>
+            </div>
           </div>
         ))}
       </CardContent>

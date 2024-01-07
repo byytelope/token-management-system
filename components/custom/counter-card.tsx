@@ -20,91 +20,123 @@ export default function CounterCard({
   counter,
   services,
 }: { counter?: Counter; services: Service[] }) {
-  const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
+  const [skipUpdate, setSkipUpdate] = useState(true);
+  const [selectedServiceIds, setSelectedServiceIds] = useState(
+    counter ? counter.categoryIds : [],
+  );
 
   useEffect(() => {
-    if (counter) setSelectedServiceIds(counter!.categoryIds);
+    setSelectedServiceIds(counter != null ? counter.categoryIds : []);
+    setSkipUpdate(true);
   }, [counter]);
+
+  useEffect(() => {
+    const fetchData = setTimeout(
+      async () => {
+        if (!skipUpdate) {
+          console.log(selectedServiceIds);
+          await updateCounter(counter!.id, { categoryIds: selectedServiceIds });
+        } else {
+          setSkipUpdate(false);
+        }
+      },
+      skipUpdate ? 0 : 1000,
+    );
+
+    return () => clearTimeout(fetchData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedServiceIds, counter]);
 
   return (
     <>
-      {counter != null && (
-        <Card className="w-full h-full">
-          <CardHeader>
-            <div className="flex w-full justify-between">
-              <div className="flex flex-col gap-2">
-                <CardTitle>Counter Control</CardTitle>
-                <CardDescription>
-                  Counter {counter.counterNumber}
-                </CardDescription>
-                <Badge
-                  variant={counter.isOpen ? "outline" : "destructive"}
-                  className="w-fit pointer-events-none"
-                >
-                  {counter.isOpen ? "Open" : "Closed"}
-                </Badge>
-              </div>
-              <div>
-                <Button
-                  variant="destructive"
-                  className={counter.isOpen ? "" : "hidden"}
-                  onClick={async () =>
-                    await updateCounter(counter.id, { isOpen: false })
-                  }
-                >
-                  Close Counter
-                </Button>
-                <Button
-                  variant="outline"
-                  className={counter.isOpen ? "hidden" : ""}
-                  onClick={async () =>
-                    await updateCounter(counter.id, { isOpen: true })
-                  }
-                >
-                  Open Counter
-                </Button>
-              </div>
+      <Card className="flex flex-col justify-between w-full">
+        <CardHeader>
+          <div className="flex w-full justify-between">
+            <div className="flex flex-col gap-2">
+              <CardTitle>Counter Control</CardTitle>
+              <CardDescription>
+                Counter {counter != null ? counter.counterNumber : "0"}
+              </CardDescription>
+              <Badge
+                variant={
+                  counter != null
+                    ? counter.isOpen
+                      ? "outline"
+                      : "destructive"
+                    : "destructive"
+                }
+                className="w-fit pointer-events-none"
+              >
+                {counter != null
+                  ? counter.isOpen
+                    ? "Open"
+                    : "Closed"
+                  : "Select a counter"}
+              </Badge>
             </div>
-            <Separator />
-          </CardHeader>
-          <CardContent className="flex flex-col gap-8 h-full items-center">
-            <div className="flex flex-col items-center">
-              <p className="text-4xl font-bold">
-                {counter.queueHistory[0]?.queueNumber ?? ""}
-              </p>
-              <p className="text-xl font-light">
-                {counter.queueHistory[0]?.serviceName ?? "-"}
-              </p>
+            <div>
+              <Button
+                variant="destructive"
+                className={counter?.isOpen ? "" : "hidden"}
+                disabled={counter == null}
+                onClick={async () => {
+                  await updateCounter(counter!.id, { isOpen: false });
+                }}
+              >
+                Close Counter
+              </Button>
+              <Button
+                variant="outline"
+                className={counter?.isOpen ? "hidden" : ""}
+                disabled={counter == null}
+                onClick={async () => {
+                  await updateCounter(counter!.id, { isOpen: true });
+                }}
+              >
+                Open Counter
+              </Button>
             </div>
-            <Button
-              disabled={!counter.isOpen}
-              variant="outline"
-              onClick={async () => await nextQueueNum(counter)}
-            >
-              Next Number
-            </Button>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-2 mt-4 items-start">
-            <p className="text-sm">Select accepted services</p>
-            <ToggleGroup
-              disabled={!counter.isOpen}
-              type="multiple"
-              className="flex flex-wrap justify-start"
-              value={selectedServiceIds}
-              onValueChange={async (values) => {
-                setSelectedServiceIds(values);
-                await updateCounter(counter.id, { categoryIds: values });
-              }}
-            >
-              {services.map((service) => (
-                <ToggleGroupItem key={service.id!} value={service.id!}>
-                  {service.name.en}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </CardFooter>
-        </Card>
-      )}
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-8 items-center">
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-bold">
+              {counter?.queueHistory[0]?.queueNumber ?? "0"}
+            </p>
+            <p className="text-xl font-light">
+              {counter?.queueHistory[0]?.serviceName ?? "-"}
+            </p>
+          </div>
+          <Button
+            disabled={!counter?.isOpen || selectedServiceIds.length === 0}
+            variant="outline"
+            onClick={async () => {
+              await nextQueueNum(counter!, selectedServiceIds);
+            }}
+          >
+            Next Number
+          </Button>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-2 mt-4 items-start">
+          <p className="text-sm text-muted-foreground">
+            Select accepted services
+          </p>
+          <Separator />
+          <ToggleGroup
+            disabled={!counter?.isOpen}
+            type="multiple"
+            className="flex flex-wrap justify-start"
+            value={selectedServiceIds}
+            onValueChange={(values) => setSelectedServiceIds(values)}
+          >
+            {services.map((service) => (
+              <ToggleGroupItem key={service.id!} value={service.id!}>
+                {service.name.en}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </CardFooter>
+      </Card>
     </>
   );
 }

@@ -27,7 +27,7 @@ export const getAllCounters = async () => {
     .select("*")
     .order("counterNumber")
     .returns<Counter[]>();
-  return counters;
+  return counters ?? [];
 };
 
 export const getAllServices = async (columns?: Array<keyof Service>) => {
@@ -80,12 +80,12 @@ export const getAllQueueItems = async () => {
   return data;
 };
 
-export const nextQueueNum = async (counter: Counter) => {
+export const nextQueueNum = async (counter: Counter, selectedIds: string[]) => {
   noStore();
   const { data: queueItem } = await supabase
     .from("queueItems")
     .select("*")
-    .in("categoryId", counter.categoryIds)
+    .in("categoryId", selectedIds)
     .limit(1)
     .single<QueueItem>();
 
