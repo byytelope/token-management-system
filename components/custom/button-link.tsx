@@ -1,36 +1,51 @@
-import Link from "next/link";
-import { Button, ButtonProps } from "../ui/button";
+"use client";
 
-interface ButtonLinkProps {
-  dhivehi?: boolean;
-  animationDelay?: number;
-  href?: string;
-  onClick?: ButtonProps["onClick"];
-  children: ButtonProps["children"];
-}
+import { Service } from "@/lib/types";
+import KioskButton from "./kiosk-button";
+import { toast } from "sonner";
+import { dispenseToken } from "@/lib/actions";
+import { useRouter } from "next/navigation";
 
 export default function ButtonLink({
-  dhivehi = false,
-  animationDelay = 0,
-  href,
-  onClick,
-  children,
-}: ButtonLinkProps) {
+  service,
+  serviceIds,
+  animationDelay,
+}: { service: Service; serviceIds: string[]; animationDelay?: number }) {
+  const router = useRouter();
+  const isLink = service && service.childrenIds.length !== 0;
+
   return (
-    <Button
-      variant={href != null ? "secondary" : "outline"}
-      className="rounded-full w-full text-ellipsis text-2xl md:text-4xl xl:text-5xl py-12 md:py-16 xl:py-24 px-8 opacity-0 animate-slide-in"
-      style={{ "--delay": `${animationDelay * 0.1}s` } as React.CSSProperties}
-      onClick={onClick}
-      asChild={href != null}
+    <KioskButton
+      onClick={
+        !isLink
+          ? () => {
+              toast.promise(
+                dispenseToken(
+                  serviceIds.length !== 0 ? serviceIds[0] : service.id,
+                  service.name.en,
+                ),
+                {
+                  loading: "Dispensing token...",
+                  success: (data: string) => {
+                    return data;
+                  },
+                  error: "Error",
+                },
+              );
+              router.replace("/");
+            }
+          : undefined
+      }
+      href={
+        isLink
+          ? `/english/${serviceIds.length !== 0 ? serviceIds.join("/") : ""}/${
+              service.id
+            }`
+          : undefined
+      }
+      animationDelay={animationDelay}
     >
-      {href != null ? (
-        <Link href={href} className={`${dhivehi && "font-faruma"}`}>
-          {children}
-        </Link>
-      ) : (
-        children
-      )}
-    </Button>
+      {service.name.en}
+    </KioskButton>
   );
 }

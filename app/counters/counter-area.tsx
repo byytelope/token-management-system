@@ -3,15 +3,16 @@
 import { Counter, Service } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { createBrowserClient } from "@supabase/ssr";
-import { Database } from "@/lib/supabaseTypes";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
-import { addCounter } from "@/lib/actions";
+import { addCounter, rpc } from "@/lib/actions";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import CounterSelect from "@/components/custom/counter-select";
 import CounterCard from "@/components/custom/counter-card";
 import { createQueryString } from "@/lib/utils";
 import QueueInfo from "@/components/custom/queue-info";
+import { useBrowserClient } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function CounterArea({
   services,
@@ -21,10 +22,7 @@ export default function CounterArea({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
-  );
+  const supabase = useBrowserClient();
 
   useEffect(() => {
     setCounters(serverCounters);
@@ -59,29 +57,45 @@ export default function CounterArea({
 
   return (
     <div className="w-full h-full mb-8">
-      <div className="flex justify-between mb-16">
+      <div className="flex flex-col md:flex-row gap-4 justify-between mb-16">
         <h1 className="text-3xl font-bold tracking-tight">Counters</h1>
-        {counters.length === 0 ? (
+        <div className="flex gap-2">
           <Button
-            className="gap-2 w-40"
-            variant="outline"
+            variant="destructive"
+            className="gap-2"
             onClick={async () => {
-              const counter = await addCounter();
-              router.push(
-                `${pathname}?${createQueryString(
-                  "id",
-                  counter!.id,
-                  searchParams,
-                )}`,
-              );
+              const res = await rpc("reset_tables_and_sequences");
+              if (res.status === 200) {
+                toast.success("Successfully reset database");
+              } else {
+                toast.error(res.message);
+              }
             }}
           >
-            <PlusCircledIcon className="size-4" />
-            Add Counter
+            <ExclamationTriangleIcon className="size-4" /> Reset all
           </Button>
-        ) : (
-          <CounterSelect counters={counters} />
-        )}
+          {counters.length === 0 ? (
+            <Button
+              className="gap-2 w-40"
+              variant="outline"
+              onClick={async () => {
+                const counter = await addCounter();
+                router.push(
+                  `${pathname}?${createQueryString(
+                    "id",
+                    counter!.id,
+                    searchParams,
+                  )}`,
+                );
+              }}
+            >
+              <PlusCircledIcon className="size-4" />
+              Add Counter
+            </Button>
+          ) : (
+            <CounterSelect counters={counters} />
+          )}
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <CounterCard

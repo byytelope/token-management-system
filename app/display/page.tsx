@@ -3,19 +3,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getAllCounters } from "@/lib/actions";
-import { Database } from "@/lib/supabaseTypes";
+import { useBrowserClient } from "@/lib/supabase";
 import { Counter } from "@/lib/types";
-import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Display() {
   const router = useRouter();
   const [counters, setCounters] = useState<Counter[]>([]);
-  const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
-  );
+  const supabase = useBrowserClient();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +38,7 @@ export default function Display() {
 
             return updatedCounters;
           });
+
           router.refresh();
         },
       )
@@ -53,7 +50,7 @@ export default function Display() {
   }, [router, supabase]);
 
   return (
-    <main className="flex flex-col pt-12 px-8 lg:px-12 xl:px-16">
+    <main className="flex flex-col py-12 px-8 lg:px-12 xl:px-16">
       <h1 className="font-bold text-3xl pb-24">AIMS Diagnostic Care</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {counters.map((counter) => (
@@ -69,9 +66,13 @@ export default function Display() {
                 {counter.isOpen ? "Open" : "Closed"}
               </Badge>
             </div>
-            <div className="flex flex-col gap-4 items-center">
+            <div
+              className={`flex flex-col gap-4 items-center transition-colors duration-300 ${
+                counter.isOpen ? "text-foreground" : "text-muted-foreground/50"
+              }`}
+            >
               <p className="font-bold text-5xl">
-                {counter.queueHistory[0]?.queueNumber}
+                {counter.queueHistory[0]?.queueNumber ?? "-"}
               </p>
               <p className="text-xl">{counter.queueHistory[0]?.serviceName}</p>
             </div>

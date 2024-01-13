@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import Header from "@/components/custom/header";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,8 +25,9 @@ export default function CounterLayout({
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <body className={`${inter.variable} min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Toaster richColors />
           <Header />
-          <main className="px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow items-center">
+          <main className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow items-center">
             {children}
           </main>
         </ThemeProvider>

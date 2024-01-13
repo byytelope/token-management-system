@@ -99,7 +99,11 @@ export default function CounterCard({
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-8 items-center">
-          <div className="flex flex-col items-center">
+          <div
+            className={`flex flex-col items-center transition-colors ${
+              counter?.isOpen ? "text-foreground" : "text-muted-foreground/50"
+            }`}
+          >
             <p className="text-4xl font-bold">
               {counter?.queueHistory[0]?.queueNumber ?? "0"}
             </p>

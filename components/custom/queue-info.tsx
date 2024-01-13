@@ -9,17 +9,13 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { createBrowserClient } from "@supabase/ssr";
-import { Database } from "@/lib/supabaseTypes";
 import { QueueItem } from "@/lib/types";
 import { getAllQueueItems } from "@/lib/actions";
+import { useBrowserClient } from "@/lib/supabase";
 
 export default function QueueInfo() {
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
-  const supabase = createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
-  );
+  const supabase = useBrowserClient();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +36,7 @@ export default function QueueInfo() {
           console.log("Change received!", payload);
           setQueueItems((oldQueueItems) => {
             if (payload.eventType === "INSERT") {
-              return [payload.new, ...oldQueueItems];
+              return [...oldQueueItems, payload.new];
             } else if (payload.eventType === "DELETE") {
               const indexToDelete = oldQueueItems.findIndex(
                 (q) => q.id === payload.old.id,
@@ -72,13 +68,13 @@ export default function QueueInfo() {
         {queueItems.map((item, i) => (
           <div
             key={item.id}
-            className="flex rounded-lg border p-4 animate-in fade-in duration-500 overflow-hidden"
+            className="flex rounded-lg border p-4 animate-in fade-in duration-500"
           >
             <div className="flex items-center">
               {i + 1}
               <Separator orientation="vertical" className="mx-4" />
             </div>
-            <div>
+            <div className="min-w-0 break-words">
               <p className="font-semibold text-sm">{item.queueNumber}</p>
               <p className="text-sm">{item.serviceName}</p>
             </div>

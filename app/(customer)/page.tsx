@@ -1,4 +1,4 @@
-import ButtonLink from "@/components/custom/button-link";
+import KioskButton from "@/components/custom/kiosk-button";
 
 export default async function Home() {
   const languages = [
@@ -12,18 +12,18 @@ export default async function Home() {
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 xl:gap-16 w-full">
         {languages.map((language, i) => (
-          <ButtonLink
+          <KioskButton
             href={language.href}
             animationDelay={i}
             key={i + language.href}
             dhivehi={language.name === "ދިވެހި"}
           >
             {language.name}
-          </ButtonLink>
+          </KioskButton>
         ))}
       </div>
       <h1 className="font-faruma leading-loose">
-        އެއިމްސް ޑައިގްނޯސްޓިކް ކެއާރ ޓޯކެން ޙިދުމަތަށް މަރުޙަބާ
+        އެއިމްސް ޑައިގްނޯސްޓިކް ކެއާރ ޓޯކެން ޚިދުމަތަށް މަރުޙަބާ
       </h1>
     </main>
   );

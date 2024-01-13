@@ -1,14 +1,26 @@
 "use server";
 
 import { Counter, QueueItem, Service } from "./types";
-import { supabase } from "./supabase";
+import { getServerClient } from "./supabase";
 import { unstable_noStore as noStore } from "next/cache";
+import { cookies } from "next/headers";
+import type { Database } from "./supabaseTypes";
+
+export const rpc = async (funcName: keyof Database["public"]["Functions"]) => {
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  const { error } = await client.rpc(funcName);
+
+  return { status: error?.code ?? 200, message: error?.message ?? "Success" };
+};
 
 export const dispenseToken = async (
   categoryId: string,
   serviceName: string,
 ) => {
-  const { error } = await supabase
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  const { error } = await client
     .from("queueItems")
     .insert({ categoryId, serviceName });
 
@@ -21,8 +33,10 @@ export const dispenseToken = async (
 };
 
 export const getAllCounters = async () => {
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
   noStore();
-  const { data: counters } = await supabase
+  const { data: counters } = await client
     .from("counters")
     .select("*")
     .order("counterNumber")
@@ -31,7 +45,9 @@ export const getAllCounters = async () => {
 };
 
 export const getAllServices = async (columns?: Array<keyof Service>) => {
-  const { data: services } = await supabase
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  const { data: services } = await client
     .from("services")
     .select(columns != null ? columns.join() : "*")
     .eq("level", 1)
@@ -43,7 +59,9 @@ export const getServiceById = async (
   serviceId: string,
   columns?: Array<keyof Service>,
 ) => {
-  const { data } = await supabase
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  const { data } = await client
     .from("services")
     .select(columns != null ? columns.join() : "*")
     .eq("id", serviceId)
@@ -53,7 +71,9 @@ export const getServiceById = async (
 };
 
 export const addCounter = async () => {
-  const { data } = await supabase
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  const { data } = await client
     .from("counters")
     .insert({ categoryIds: [] })
     .select("*")
@@ -67,12 +87,16 @@ export const updateCounter = async (
   counterId: string,
   update: Partial<Counter>,
 ) => {
-  await supabase.from("counters").update(update).eq("id", counterId);
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  await client.from("counters").update(update).eq("id", counterId);
 };
 
 export const getAllQueueItems = async () => {
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
   noStore();
-  const { data } = await supabase
+  const { data } = await client
     .from("queueItems")
     .select("*")
     .returns<QueueItem[]>();
@@ -81,8 +105,10 @@ export const getAllQueueItems = async () => {
 };
 
 export const nextQueueNum = async (counter: Counter, selectedIds: string[]) => {
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
   noStore();
-  const { data: queueItem } = await supabase
+  const { data: queueItem } = await client
     .from("queueItems")
     .select("*")
     .in("categoryId", selectedIds)
@@ -91,7 +117,7 @@ export const nextQueueNum = async (counter: Counter, selectedIds: string[]) => {
 
   if (queueItem == null) return;
 
-  await supabase
+  await client
     .from("counters")
     .update({
       queueHistory: [
@@ -104,5 +130,5 @@ export const nextQueueNum = async (counter: Counter, selectedIds: string[]) => {
     })
     .eq("id", counter.id);
 
-  await supabase.from("queueItems").delete().eq("id", queueItem.id);
+  await client.from("queueItems").delete().eq("id", queueItem.id);
 };
