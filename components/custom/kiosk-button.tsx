@@ -25,7 +25,7 @@ export default function KioskButton({
   return (
     <Button
       variant={href != null ? "secondary" : "outline"}
-      className="rounded-full w-full text-2xl md:text-4xl xl:text-5xl py-12 md:py-16 xl:py-24 px-8 opacity-0 animate-slide-in"
+      className="rounded-full break-words whitespace-normal !leading-snug w-full text-2xl md:text-4xl xl:text-5xl py-12 md:py-16 xl:py-24 px-8 opacity-0 animate-slide-in"
       style={{ "--delay": `${animationDelay * 0.1}s` } as React.CSSProperties}
       onClick={(e) => {
         setIsLoading(true);

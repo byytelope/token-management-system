@@ -13,7 +13,7 @@ export default function EnglishLayout({
 }) {
   return (
     <>
-      <main className="flex flex-col flex-grow relative justify-start items-center h-full w-full pt-16 xl:pt-24 px-12 xl:px-32 mb-48 gap-8 xl:gap-16">
+      <main className="flex flex-col flex-grow relative justify-start items-center h-full w-full pt-8 md:pt-16 xl:pt-24 px-12 xl:px-32 mb-32 md:mb-48 gap-8 xl:gap-16">
         {children}
         <Footer />
       </main>

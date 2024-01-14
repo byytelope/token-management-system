@@ -44,7 +44,7 @@ export interface Database {
           queueHistory: Json[]
         }
         Insert: {
-          categoryIds: string[]
+          categoryIds?: string[]
           counterNumber?: number
           createdAt?: string
           id?: string
@@ -103,7 +103,7 @@ export interface Database {
           tokenPrefix: string
         }
         Insert: {
-          childrenIds: string[]
+          childrenIds?: string[]
           createdAt?: string
           id?: string
           level?: number

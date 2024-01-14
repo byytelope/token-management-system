@@ -104,8 +104,8 @@ export default function CounterCard({
               counter?.isOpen ? "text-foreground" : "text-muted-foreground/50"
             }`}
           >
-            <p className="text-4xl font-bold">
-              {counter?.queueHistory[0]?.queueNumber ?? "0"}
+            <p className="text-4xl font-bold tabular-nums">
+              {counter?.queueHistory[0]?.queueNumber ?? "#0000"}
             </p>
             <p className="text-xl font-light">
               {counter?.queueHistory[0]?.serviceName ?? "-"}
@@ -127,7 +127,7 @@ export default function CounterCard({
           </p>
           <Separator />
           <ToggleGroup
-            disabled={!counter?.isOpen}
+            disabled={counter == null}
             type="multiple"
             className="flex flex-wrap justify-start"
             value={selectedServiceIds}

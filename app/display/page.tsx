@@ -71,10 +71,12 @@ export default function Display() {
                 counter.isOpen ? "text-foreground" : "text-muted-foreground/50"
               }`}
             >
-              <p className="font-bold text-5xl">
-                {counter.queueHistory[0]?.queueNumber ?? "-"}
+              <p className="font-bold text-5xl tabular-nums">
+                {counter.queueHistory[0]?.queueNumber ?? "#0000"}
               </p>
-              <p className="text-xl">{counter.queueHistory[0]?.serviceName}</p>
+              <p className="text-xl">
+                {counter.queueHistory[0]?.serviceName ?? "-"}
+              </p>
             </div>
           </Card>
         ))}
