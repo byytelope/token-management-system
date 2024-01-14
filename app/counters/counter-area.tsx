@@ -67,6 +67,7 @@ export default function CounterArea({
               const res = await rpc("reset_tables_and_sequences");
               if (res.status === 200) {
                 toast.success("Successfully reset database");
+                router.refresh();
               } else {
                 toast.error(res.message);
               }

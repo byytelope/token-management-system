@@ -32,6 +32,7 @@ export default function KioskButton({
         onClick != null && onClick(e);
       }}
       asChild={href != null}
+      disabled={isLoading}
     >
       {href != null ? (
         <Link href={href} className={`${dhivehi && "font-faruma"}`}>
