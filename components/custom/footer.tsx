@@ -15,7 +15,7 @@ export default function Footer() {
       >
         {"<-"}
       </Button>
-      <div>AIMS</div>
+      <div>TMS</div>
     </footer>
   );
 }

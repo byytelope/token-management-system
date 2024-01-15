@@ -64,15 +64,15 @@ export default function QueueInfo() {
         <CardDescription>Upcoming numbers</CardDescription>
         <Separator />
       </CardHeader>
-      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @2xl:grid-cols-4 @4xl:grid-cols-5 gap-4 pt-24 max-h-[60dvh] overflow-scroll">
+      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @2xl:grid-cols-4 @4xl:grid-cols-5 gap-2 md:gap-4 pt-24 max-h-[60dvh] overflow-scroll">
         {queueItems.map((item, i) => (
           <div
             key={item.id}
-            className="flex rounded-lg border p-4 animate-in fade-in duration-500"
+            className="flex rounded-lg border p-2 md:p-4 animate-in fade-in duration-500"
           >
             <div className="flex items-center">
               {i + 1}
-              <Separator orientation="vertical" className="mx-4" />
+              <Separator orientation="vertical" className="mx-2 md:mx-4" />
             </div>
             <div className="min-w-0 break-words">
               <p className="font-semibold text-sm">{item.queueNumber}</p>

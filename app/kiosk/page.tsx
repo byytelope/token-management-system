@@ -13,7 +13,7 @@ export default async function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 xl:gap-16 w-full">
         {languages.map((language, i) => (
           <KioskButton
-            href={language.href}
+            href={`kiosk/${language.href}`}
             animationDelay={i}
             key={i + language.href}
             dhivehi={language.name === "ދިވެހި"}

@@ -4,7 +4,7 @@ import { Service } from "@/lib/types";
 import KioskButton from "./kiosk-button";
 import { toast } from "sonner";
 import { dispenseToken } from "@/lib/actions";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function ButtonLink({
   service,
@@ -12,6 +12,8 @@ export default function ButtonLink({
   animationDelay,
 }: { service: Service; serviceIds: string[]; animationDelay?: number }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const lang = pathname.split("/")[2];
   const isLink = service && service.childrenIds.length !== 0;
 
   return (
@@ -32,15 +34,15 @@ export default function ButtonLink({
                   error: "Error",
                 },
               );
-              router.replace("/");
+              router.replace("/kiosk");
             }
           : undefined
       }
       href={
         isLink
-          ? `/english/${serviceIds.length !== 0 ? serviceIds.join("/") : ""}/${
-              service.id
-            }`
+          ? `/kiosk/${lang}/${
+              serviceIds.length !== 0 ? serviceIds.join("/") : ""
+            }/${service.id}`
           : undefined
       }
       animationDelay={animationDelay}
