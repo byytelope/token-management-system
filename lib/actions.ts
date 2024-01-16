@@ -5,6 +5,7 @@ import { getServerClient } from "./supabase";
 import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import type { Database } from "./supabaseTypes";
+import { memoize } from "nextjs-better-unstable-cache";
 
 export const rpc = async (funcName: keyof Database["public"]["Functions"]) => {
   const cookieStore = cookies();
@@ -56,14 +57,19 @@ export const getCounterById = async (id: string) => {
   return data![0];
 };
 
-export const getAllServices = async (columns?: Array<keyof Service>) => {
+export const getAllServices = async (columns?: (keyof Service)[]) => {
   const cookieStore = cookies();
   const client = getServerClient(cookieStore);
-  const { data: services } = await client
-    .from("services")
-    .select(columns != null ? columns.join() : "*")
-    .eq("level", 1)
-    .returns<Service[]>();
+  const memoizedFn = memoize(
+    async (columns?: Array<keyof Service>) =>
+      await client
+        .from("services")
+        .select(columns != null ? columns.join() : "*")
+        .eq("level", 1)
+        .returns<Service[]>(),
+  );
+  const { data: services } = await memoizedFn(columns);
+
   return services ?? [];
 };
 
@@ -73,11 +79,15 @@ export const getServiceById = async (
 ) => {
   const cookieStore = cookies();
   const client = getServerClient(cookieStore);
-  const { data } = await client
-    .from("services")
-    .select(columns != null ? columns.join() : "*")
-    .eq("id", serviceId)
-    .returns<Partial<Service[]>>();
+  const memoizedFn = memoize(
+    async (serviceId: string, columns?: Array<keyof Service>) =>
+      await client
+        .from("services")
+        .select(columns != null ? columns.join() : "*")
+        .eq("id", serviceId)
+        .returns<Partial<Service[]>>(),
+  );
+  const { data } = await memoizedFn(serviceId, columns);
 
   if (data != null) return data[0];
 };

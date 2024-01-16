@@ -83,6 +83,9 @@ dependencies:
   next-themes:
     specifier: ^0.2.1
     version: 0.2.1(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
+  nextjs-better-unstable-cache:
+    specifier: ^1.0.0
+    version: 1.0.0(next@14.0.4)(react@18.2.0)(typescript@5.3.3)
   postcss:
     specifier: ^8.4.33
     version: 8.4.33
@@ -2902,6 +2905,19 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
+
+  /nextjs-better-unstable-cache@1.0.0(next@14.0.4)(react@18.2.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-djzOX+XDHRtxPpptIjqvhYKbXyNTzBzht2tqtTwQBs+Y1uUqV7h2ptmTXF7YlJg6r/mka1/DaAhoI6srEwnlVg==}
+    peerDependencies:
+      next: '>=13.4'
+      react: next
+      typescript: '>=5.2.2'
+    dependencies:
+      chalk: 4.1.2
+      next: 14.0.4(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      typescript: 5.3.3
     dev: false
 
   /node-releases@2.0.14:
