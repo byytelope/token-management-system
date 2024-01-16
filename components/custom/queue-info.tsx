@@ -12,10 +12,12 @@ import { Separator } from "../ui/separator";
 import { QueueItem } from "@/lib/types";
 import { getAllQueueItems } from "@/lib/actions";
 import { useBrowserClient } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function QueueInfo() {
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
   const supabase = useBrowserClient();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +50,7 @@ export default function QueueInfo() {
 
             return oldQueueItems;
           });
+          router.refresh();
         },
       )
       .subscribe();
@@ -55,7 +58,7 @@ export default function QueueInfo() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase]);
+  }, [supabase, router]);
 
   return (
     <Card className="w-full relative @container overflow-hidden">
@@ -70,9 +73,9 @@ export default function QueueInfo() {
             key={item.id}
             className="flex rounded-lg border p-2 md:p-4 animate-in fade-in duration-500"
           >
-            <div className="flex items-center">
+            <div className="flex items-center pl-1 md:pl-0">
               {i + 1}
-              <Separator orientation="vertical" className="mx-2 md:mx-4" />
+              <Separator orientation="vertical" className="mx-3 md:mx-4" />
             </div>
             <div className="min-w-0 break-words">
               <p className="font-semibold text-sm">{item.queueNumber}</p>

@@ -32,16 +32,28 @@ export const dispenseToken = async (
   }
 };
 
-export const getAllCounters = async () => {
+export const getAllCounters = async (columns?: Array<keyof Counter>) => {
   const cookieStore = cookies();
   const client = getServerClient(cookieStore);
   noStore();
   const { data: counters } = await client
     .from("counters")
-    .select("*")
+    .select(columns != null ? columns.join() : "*")
     .order("counterNumber")
     .returns<Counter[]>();
   return counters ?? [];
+};
+
+export const getCounterById = async (id: string) => {
+  const cookieStore = cookies();
+  const client = getServerClient(cookieStore);
+  const { data } = await client
+    .from("counters")
+    .select("*")
+    .eq("id", id)
+    .returns<Counter[]>();
+
+  return data![0];
 };
 
 export const getAllServices = async (columns?: Array<keyof Service>) => {

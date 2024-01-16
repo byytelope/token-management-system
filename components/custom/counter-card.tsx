@@ -1,8 +1,7 @@
 "use client";
 
-import { Counter, Service } from "@/lib/types";
 import { Button } from "../ui/button";
-import { nextQueueNum, updateCounter } from "@/lib/actions";
+import { getCounterById, nextQueueNum, updateCounter } from "@/lib/actions";
 import {
   Card,
   CardContent,
@@ -15,20 +14,34 @@ import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { useEffect, useState } from "react";
+import { Counter } from "@/lib/types";
+import { useSearchParams } from "next/navigation";
+import { useBrowserClient } from "@/lib/supabase";
 
 export default function CounterCard({
-  counter,
-  services,
-}: { counter?: Counter; services: Service[] }) {
+  servicesInfo,
+}: { servicesInfo: { id: string; name: { [key: string]: string } }[] }) {
   const [skipUpdate, setSkipUpdate] = useState(true);
-  const [selectedServiceIds, setSelectedServiceIds] = useState(
-    counter ? counter.categoryIds : [],
-  );
+  const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
+  const [counter, setCounter] = useState<Counter>();
+  const supabase = useBrowserClient();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    setSelectedServiceIds(counter != null ? counter.categoryIds : []);
-    setSkipUpdate(true);
-  }, [counter]);
+    const fetchData = async () => {
+      if (searchParams.get("id") != null) {
+        const c = await getCounterById(searchParams.get("id")!);
+        setCounter(c);
+        setSelectedServiceIds(c != null ? c.categoryIds : []);
+      } else {
+        setCounter(undefined);
+        setSelectedServiceIds([]);
+      }
+      setSkipUpdate(true);
+    };
+
+    fetchData();
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchData = setTimeout(
@@ -45,7 +58,32 @@ export default function CounterCard({
 
     return () => clearTimeout(fetchData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedServiceIds, counter]);
+  }, [selectedServiceIds]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("counter-update-channel")
+      .on<Counter>(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "counters" },
+        (payload) => {
+          console.log("Change received!", payload);
+          const newCounter = payload.new as Counter;
+          if (
+            newCounter.counterNumber != null &&
+            counter != null &&
+            newCounter.id === counter.id
+          ) {
+            setCounter(newCounter);
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase, counter]);
 
   return (
     <>
@@ -133,7 +171,7 @@ export default function CounterCard({
             value={selectedServiceIds}
             onValueChange={(values) => setSelectedServiceIds(values)}
           >
-            {services.map((service) => (
+            {servicesInfo.map((service) => (
               <ToggleGroupItem key={service.id!} value={service.id!}>
                 {service.name.en}
               </ToggleGroupItem>

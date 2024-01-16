@@ -1,6 +1,5 @@
 "use client";
 
-import { Counter } from "@/lib/types";
 import { Button } from "../ui/button";
 import { addCounter } from "@/lib/actions";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
@@ -18,9 +17,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createQueryString } from "@/lib/utils";
 
 export default function CounterSelect({
-  counters,
+  counterInfo,
 }: {
-  counters: Counter[];
+  counterInfo: { id: string; counterNumber: number }[];
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -37,10 +36,10 @@ export default function CounterSelect({
         <SelectValue placeholder="Select a counter" />
       </SelectTrigger>
       <SelectContent>
-        {counters !== null && counters!.length > 0 && (
+        {counterInfo.length > 0 && (
           <SelectGroup>
             <SelectLabel>Counters</SelectLabel>
-            {counters.map((counter) => (
+            {counterInfo.map((counter) => (
               <SelectItem key={counter.id} value={counter.id}>
                 Counter {counter.counterNumber}
               </SelectItem>
@@ -54,6 +53,7 @@ export default function CounterSelect({
             variant="ghost"
             onClick={async () => {
               await addCounter();
+              router.refresh();
             }}
           >
             <PlusCircledIcon className="size-4" />
