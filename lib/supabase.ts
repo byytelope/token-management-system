@@ -4,14 +4,16 @@ import {
   createBrowserClient,
   createServerClient,
 } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import { Database } from "./supabaseTypes";
 import { useMemo } from "react";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
+import { type NextRequest, NextResponse } from "next/server";
 
-function getServerClient(cookieStore: ReturnType<typeof cookies>) {
+function getServerClient(cookieStore: ReadonlyRequestCookies | RequestCookies) {
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         get(name: string) {
@@ -40,6 +42,54 @@ function getServerClient(cookieStore: ReturnType<typeof cookies>) {
   );
 }
 
+function getMiddlewareClient(request: NextRequest, response: NextResponse) {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: "",
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: "",
+            ...options,
+          });
+        },
+      },
+    },
+  );
+}
+
 let client: SupabaseClient<Database> | undefined;
 
 function getSupabaseBrowserClient() {
@@ -49,7 +99,7 @@ function getSupabaseBrowserClient() {
 
   client = createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
   return client;
@@ -59,4 +109,4 @@ function useBrowserClient() {
   return useMemo(getSupabaseBrowserClient, []);
 }
 
-export { useBrowserClient, getServerClient };
+export { useBrowserClient, getServerClient, getMiddlewareClient };
