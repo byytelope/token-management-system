@@ -21,7 +21,7 @@ export default function HomeLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Toaster richColors />
           <Header />
-          <main className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow bg-muted/40">
+          <main className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow">
             {children}
           </main>
         </ThemeProvider>

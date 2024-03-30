@@ -71,13 +71,13 @@ export default function QueueInfo() {
         {queueItems.map((item, i) => (
           <div
             key={item.id}
-            className="flex rounded-lg border p-2 md:p-4 animate-in fade-in duration-500"
+            className="flex rounded-lg border p-4 animate-in fade-in duration-500"
           >
             <div className="flex items-center pl-1 md:pl-0">
               {i + 1}
               <Separator orientation="vertical" className="mx-3 md:mx-4" />
             </div>
-            <div className="min-w-0 break-words">
+            <div className="min-w-0 flex flex-col justify-center break-words">
               <p className="font-semibold text-sm">{item.queueNumber}</p>
               <p className="text-sm">{item.serviceName}</p>
             </div>
