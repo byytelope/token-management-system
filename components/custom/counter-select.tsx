@@ -32,7 +32,7 @@ export default function CounterSelect({
         router.push(`${pathname}?${createQueryString("id", id, searchParams)}`);
       }}
     >
-      <SelectTrigger className="w-40">
+      <SelectTrigger className="w-40 bg-background">
         <SelectValue placeholder="Select a counter" />
       </SelectTrigger>
       <SelectContent>

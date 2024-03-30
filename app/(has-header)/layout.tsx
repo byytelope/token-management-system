@@ -17,11 +17,11 @@ export default function HomeLayout({
 }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <body className={`${inter.variable} flex flex-col`}>
+      <body className={`${inter.variable} flex flex-col min-h-screen`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Toaster richColors />
           <Header />
-          <main className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow">
+          <main className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-8 w-full h-full flex flex-col flex-grow bg-muted/40">
             {children}
           </main>
         </ThemeProvider>
