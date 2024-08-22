@@ -38,8 +38,6 @@ export default function Display() {
 
             return updatedCounters;
           });
-
-          router.refresh();
         },
       )
       .subscribe();
@@ -51,7 +49,7 @@ export default function Display() {
 
   return (
     <main className="flex flex-col py-12 px-8 lg:px-12 xl:px-16">
-      <h1 className="font-bold text-3xl pb-24">AIMS Diagnostic Care</h1>
+      <h1 className="font-bold text-3xl pb-24">Queue</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {counters.map((counter) => (
           <Card key={counter.id} className="p-8 flex flex-col gap-8">

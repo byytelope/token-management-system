@@ -67,7 +67,7 @@ export default function QueueInfo() {
         <CardDescription>Upcoming numbers</CardDescription>
         <Separator />
       </CardHeader>
-      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @2xl:grid-cols-4 @4xl:grid-cols-5 gap-2 md:gap-4 max-h-[60dvh] overflow-auto py-6">
+      <CardContent className="grid grid-cols-1 @xs:grid-cols-2 @lg:grid-cols-3 @3xl:grid-cols-4 @4xl:grid-cols-5 gap-2 md:gap-4 max-h-[60dvh] overflow-auto py-6">
         {queueItems.map((item, i) => (
           <div
             key={item.id}
