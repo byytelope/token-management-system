@@ -6,34 +6,34 @@ import { getAllServices, getServiceById } from "./actions";
 import type { Service } from "./types";
 
 export const cn = (...inputs: ClassValue[]) => {
-	return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs));
 };
 
 export const createQueryString = (
-	name: string,
-	value: string,
-	searchParams: ReadonlyURLSearchParams,
+  name: string,
+  value: string,
+  searchParams: ReadonlyURLSearchParams,
 ) => {
-	const params = new URLSearchParams(searchParams);
-	params.set(name, value);
+  const params = new URLSearchParams(searchParams);
+  params.set(name, value);
 
-	return params.toString();
+  return params.toString();
 };
 
 export const getChildServices = async (serviceId: string) => {
-	const childServices: Service[] = [];
+  const childServices: Service[] = [];
 
-	if (serviceId.trim() === "") {
-		childServices.push(...(await getAllServices()));
-	} else {
-		const service = await getServiceById(serviceId, ["childrenIds"]);
+  if (serviceId.trim() === "") {
+    childServices.push(...(await getAllServices()));
+  } else {
+    const service = await getServiceById(serviceId, ["children_ids"]);
 
-		if (service != null) {
-			for (const childId of service.childrenIds) {
-				const childService = await getServiceById(childId);
-				if (childService != null) childServices.push(childService);
-			}
-		}
-	}
-	return childServices;
+    if (service != null) {
+      for (const childId of service.children_ids) {
+        const childService = await getServiceById(childId);
+        if (childService != null) childServices.push(childService);
+      }
+    }
+  }
+  return childServices;
 };

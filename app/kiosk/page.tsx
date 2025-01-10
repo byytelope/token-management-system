@@ -16,7 +16,7 @@ export default async function Home() {
             href={`kiosk/${language.href}`}
             animationDelay={i}
             key={language.href}
-            dhivehi={language.name === "ދވހ"}
+            dhivehi={language.name === "ދިވެހި"}
           >
             {language.name}
           </KioskButton>

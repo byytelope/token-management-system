@@ -15,7 +15,7 @@ export default function ButtonLink({
   const router = useRouter();
   const pathname = usePathname();
   const lang = pathname.split("/")[2];
-  const isLink = service && service.childrenIds.length !== 0;
+  const isLink = service && service.children_ids.length !== 0;
 
   return (
     <KioskButton
