@@ -1,25 +1,15 @@
-export interface Service {
-  id: string;
-  name: {
-    [lang: string]: string;
-  };
-  childrenIds: string[];
-  tokenPrefix: string;
-  level: number;
-}
+import type { Database } from "./supabase/types";
 
-export interface Counter {
-  id: string;
-  counterNumber: number;
-  isOpen: boolean;
-  queueHistory: { queueNumber: string; serviceName: string }[];
-  categoryIds: string[];
-}
-
-export interface QueueItem {
-  id: string;
-  categoryId: string;
-  serviceName: string;
-  queueNumber: string;
-  createdAt: string;
-}
+export type Service = Omit<
+  Database["public"]["Tables"]["services"]["Row"],
+  "name"
+> & {
+  name: { [lang: string]: string };
+};
+export type QueueItem = Database["public"]["Tables"]["queue_items"]["Row"];
+export type Counter = Omit<
+  Database["public"]["Tables"]["counters"]["Row"],
+  "queue_history"
+> & {
+  queue_history: { queue_number: string; service_name: string }[];
+};

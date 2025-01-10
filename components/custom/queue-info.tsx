@@ -1,6 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { getAllQueueItems } from "@/lib/actions";
+import { useBrowserClient } from "@/lib/supabase/client";
+import type { QueueItem } from "@/lib/types";
 import {
   Card,
   CardContent,
@@ -9,10 +14,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { QueueItem } from "@/lib/types";
-import { getAllQueueItems } from "@/lib/actions";
-import { useBrowserClient } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 
 export default function QueueInfo() {
   const [queueItems, setQueueItems] = useState<QueueItem[]>([]);
@@ -37,14 +38,16 @@ export default function QueueInfo() {
         (payload) => {
           console.log("Change received!", payload);
           setQueueItems((oldQueueItems) => {
-            if (payload.eventType === "INSERT") {
-              return [...oldQueueItems, payload.new];
-            } else if (payload.eventType === "DELETE") {
-              const indexToDelete = oldQueueItems.findIndex(
-                (q) => q.id === payload.old.id,
-              );
-              if (indexToDelete !== -1) {
-                oldQueueItems.splice(indexToDelete, 1);
+            switch (payload.eventType) {
+              case "INSERT":
+                return [...oldQueueItems, payload.new];
+              case "DELETE": {
+                const indexToDelete = oldQueueItems.findIndex(
+                  (q) => q.id === payload.old.id,
+                );
+                if (indexToDelete !== -1) {
+                  oldQueueItems.splice(indexToDelete, 1);
+                }
               }
             }
 
@@ -78,8 +81,8 @@ export default function QueueInfo() {
               <Separator orientation="vertical" className="mx-3 md:mx-4" />
             </div>
             <div className="min-w-0 flex flex-col justify-center break-words">
-              <p className="font-semibold text-sm">{item.queueNumber}</p>
-              <p className="text-sm">{item.serviceName}</p>
+              <p className="font-semibold text-sm">{item.queue_number}</p>
+              <p className="text-sm">{item.service_name}</p>
             </div>
           </div>
         ))}

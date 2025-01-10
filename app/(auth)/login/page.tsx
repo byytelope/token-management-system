@@ -15,7 +15,7 @@ export default function LogIn() {
           <CardDescription>
             Enter your email and password to login
           </CardDescription>
-          <CardContent></CardContent>
+          <CardContent>H</CardContent>
         </CardHeader>
       </Card>
     </>

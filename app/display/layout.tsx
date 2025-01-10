@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import "../globals.css";
 
@@ -11,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "TMS | Display",
-  description: "Token management system by yours truly",
+  description: "Token management system",
 };
 
 export default function DisplayLayout({

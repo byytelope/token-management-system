@@ -1,10 +1,11 @@
 "use client";
 
-import { Service } from "@/lib/types";
-import KioskButton from "./kiosk-button";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 import { dispenseToken } from "@/lib/actions";
-import { useRouter, usePathname } from "next/navigation";
+import type { Service } from "@/lib/types";
+import KioskButton from "./kiosk-button";
 
 export default function ButtonLink({
   service,
@@ -24,7 +25,7 @@ export default function ButtonLink({
               toast.promise(
                 dispenseToken(
                   serviceIds.length !== 0 ? serviceIds[0] : service.id,
-                  service.name.en,
+                  service.name["en-US"],
                 ),
                 {
                   loading: "Dispensing token...",
@@ -47,7 +48,7 @@ export default function ButtonLink({
       }
       animationDelay={animationDelay}
     >
-      {service.name.en}
+      {service.name["en-US"]}
     </KioskButton>
   );
 }

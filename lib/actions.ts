@@ -1,15 +1,13 @@
 "use server";
 
-import { Counter, QueueItem, Service } from "./types";
-import { getServerClient } from "./supabase";
-import { unstable_noStore as noStore } from "next/cache";
-import { cookies } from "next/headers";
-import type { Database } from "./supabaseTypes";
-import { memoize } from "nextjs-better-unstable-cache";
+import { connection } from "next/server";
+
+import { getServerClient } from "./supabase/server";
+import type { Database } from "./supabase/types";
+import type { Counter, QueueItem, Service } from "./types";
 
 export const rpc = async (funcName: keyof Database["public"]["Functions"]) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
+  const client = await getServerClient();
   const { error } = await client.rpc(funcName);
 
   return { status: error?.code ?? 200, message: error?.message ?? "Success" };
@@ -19,35 +17,44 @@ export const dispenseToken = async (
   categoryId: string,
   serviceName: string,
 ) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
+  const client = await getServerClient();
   const { error } = await client
-    .from("queueItems")
-    .insert({ categoryId, serviceName });
+    .from("queue_items")
+    .insert({ category_id: categoryId, service_name: serviceName });
 
   if (error) {
     console.log(error);
     return error.message;
-  } else {
-    return `Token dispensed - ${serviceName}`;
   }
+
+  return `Token dispensed - ${serviceName}`;
 };
 
 export const getAllCounters = async (columns?: Array<keyof Counter>) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
-  noStore();
-  const { data: counters } = await client
-    .from("counters")
-    .select(columns != null ? columns.join() : "*")
-    .order("counterNumber")
-    .returns<Counter[]>();
-  return counters ?? [];
+  const client = await getServerClient();
+  await connection();
+
+  try {
+    const { data: counters, error } = await client
+      .from("counters")
+      .select(columns ? columns.join() : "*")
+      .order("counter_number")
+      .returns<Counter[]>();
+
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      throw new Error("Failed to fetch all counters");
+    }
+
+    return counters;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 };
 
 export const getCounterById = async (id: string) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
+  const client = await getServerClient();
   const { data } = await client
     .from("counters")
     .select("*")
@@ -58,46 +65,56 @@ export const getCounterById = async (id: string) => {
 };
 
 export const getAllServices = async (columns?: (keyof Service)[]) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
-  const memoizedFn = memoize(
-    async (columns?: Array<keyof Service>) =>
-      await client
-        .from("services")
-        .select(columns != null ? columns.join() : "*")
-        .eq("level", 1)
-        .returns<Service[]>(),
-  );
-  const { data: services } = await memoizedFn(columns);
+  const client = await getServerClient();
 
-  return services ?? [];
+  try {
+    const { data: services, error } = await client
+      .from("services")
+      .select(columns ? columns.join() : "*")
+      .eq("level", 1)
+      .returns<Service[]>();
+
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      throw new Error(`Failed to fetch all services: ${error.message}`);
+    }
+
+    return services;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 };
 
 export const getServiceById = async (
   serviceId: string,
   columns?: Array<keyof Service>,
 ) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
-  const memoizedFn = memoize(
-    async (serviceId: string, columns?: Array<keyof Service>) =>
-      await client
-        .from("services")
-        .select(columns != null ? columns.join() : "*")
-        .eq("id", serviceId)
-        .returns<Partial<Service[]>>(),
-  );
-  const { data } = await memoizedFn(serviceId, columns);
+  const client = await getServerClient();
 
-  if (data != null) return data[0];
+  try {
+    const { data, error } = await client
+      .from("services")
+      .select(columns ? columns.join() : "*")
+      .eq("id", serviceId)
+      .returns<Partial<Service[]>>();
+
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      throw new Error(`Failed to fetch service by ID: ${error.message}`);
+    }
+
+    return data && data.length > 0 ? data[0] : null;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const addCounter = async () => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
+  const client = await getServerClient();
   const { data } = await client
     .from("counters")
-    .insert({ categoryIds: [] })
+    .insert({ category_ids: [] })
     .select("*")
     .limit(1)
     .single<Counter>();
@@ -109,48 +126,66 @@ export const updateCounter = async (
   counterId: string,
   update: Partial<Counter>,
 ) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
+  const client = await getServerClient();
   await client.from("counters").update(update).eq("id", counterId);
 };
 
 export const getAllQueueItems = async () => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
-  noStore();
-  const { data } = await client
-    .from("queueItems")
-    .select("*")
-    .returns<QueueItem[]>();
+  const client = await getServerClient();
+  await connection();
 
-  return data;
+  try {
+    const { data, error } = await client
+      .from("queue_items")
+      .select("*")
+      .returns<QueueItem[]>();
+
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      throw new Error(`Failed to fetch all queue items: ${error.message}`);
+    }
+
+    return data;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 };
 
 export const nextQueueNum = async (counter: Counter, selectedIds: string[]) => {
-  const cookieStore = cookies();
-  const client = getServerClient(cookieStore);
-  noStore();
-  const { data: queueItem } = await client
-    .from("queueItems")
-    .select("*")
-    .in("categoryId", selectedIds)
-    .limit(1)
-    .single<QueueItem>();
+  const client = await getServerClient();
+  await connection();
 
-  if (queueItem == null) return;
+  try {
+    const { data: queueItem, error } = await client
+      .from("queue_items")
+      .select("*")
+      .in("category_id", selectedIds)
+      .limit(1)
+      .single<QueueItem>();
 
-  await client
-    .from("counters")
-    .update({
-      queueHistory: [
-        {
-          queueNumber: queueItem.queueNumber,
-          serviceName: queueItem.serviceName,
-        },
-        ...counter.queueHistory,
-      ],
-    })
-    .eq("id", counter.id);
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      throw new Error(`Failed to fetch next queue item: ${error.message}`);
+    }
 
-  await client.from("queueItems").delete().eq("id", queueItem.id);
+    if (queueItem == null) return;
+
+    await client
+      .from("counters")
+      .update({
+        queue_history: [
+          {
+            queue_number: queueItem.queue_number,
+            service_name: queueItem.service_name,
+          },
+          ...counter.queue_history,
+        ],
+      })
+      .eq("id", counter.id);
+
+    await client.from("queue_items").delete().eq("id", queueItem.id);
+  } catch (err) {
+    console.error(err);
+  }
 };

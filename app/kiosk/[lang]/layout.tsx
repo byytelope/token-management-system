@@ -1,9 +1,10 @@
-import Footer from "@/components/custom/footer";
 import type { Metadata } from "next";
+
+import Footer from "@/components/custom/footer";
 
 export const metadata: Metadata = {
   title: "TMS | Kiosk",
-  description: "Token management system by yours truly",
+  description: "Token management system",
 };
 
 export default function EnglishLayout({

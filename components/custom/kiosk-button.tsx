@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { Button, ButtonProps } from "../ui/button";
-import { useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { useState } from "react";
+
+import { Button, type ButtonProps } from "../ui/button";
 
 interface KioskButtonProps {
   dhivehi?: boolean;
@@ -29,7 +30,7 @@ export default function KioskButton({
       style={{ "--delay": `${animationDelay * 0.1}s` } as React.CSSProperties}
       onClick={(e) => {
         setIsLoading(true);
-        onClick != null && onClick(e);
+        onClick?.(e);
       }}
       asChild={href != null}
       disabled={isLoading}

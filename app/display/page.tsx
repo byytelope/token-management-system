@@ -1,15 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getAllCounters } from "@/lib/actions";
-import { useBrowserClient } from "@/lib/supabase";
-import { Counter } from "@/lib/types";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useBrowserClient } from "@/lib/supabase/client";
+import type { Counter } from "@/lib/types";
 
 export default function Display() {
-  const router = useRouter();
   const [counters, setCounters] = useState<Counter[]>([]);
   const supabase = useBrowserClient();
 
@@ -45,7 +44,7 @@ export default function Display() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [router, supabase]);
+  }, [supabase]);
 
   return (
     <main className="flex flex-col py-12 px-8 lg:px-12 xl:px-16">

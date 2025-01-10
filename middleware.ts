@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getMiddlewareClient } from "./lib/supabase";
+import { getMiddlewareClient } from "./lib/supabase/middleware";
 
 export async function middleware(req: NextRequest) {
   if (process.env.NODE_ENV === "production") {
-    let res = NextResponse.next({
+    const res = NextResponse.next({
       request: {
         headers: req.headers,
       },

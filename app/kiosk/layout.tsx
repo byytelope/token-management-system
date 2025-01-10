@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
-import "../globals.css";
+
 import { ThemeProvider } from "@/components/custom/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import "../globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,7 +20,7 @@ const faruma = localFont({
 
 export const metadata: Metadata = {
   title: "TMS | Kiosk",
-  description: "Token management solution by yours truly",
+  description: "Token management solution",
 };
 
 export default function RootLayout({

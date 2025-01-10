@@ -1,22 +1,23 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+
+import CounterCard from "@/components/custom/counter-card";
+import CounterSelect from "@/components/custom/counter-select";
+import QueueInfo from "@/components/custom/queue-info";
 import { Button } from "@/components/ui/button";
 import { addCounter, rpc } from "@/lib/actions";
-import { PlusCircledIcon } from "@radix-ui/react-icons";
-import CounterSelect from "@/components/custom/counter-select";
-import CounterCard from "@/components/custom/counter-card";
 import { createQueryString } from "@/lib/utils";
-import QueueInfo from "@/components/custom/queue-info";
-import { toast } from "sonner";
 
 export default function CounterArea({
   servicesInfo,
   counterInfo,
 }: {
-  servicesInfo: { id: string; name: { [key: string]: string } }[];
-  counterInfo: { id: string; counterNumber: number }[];
+  servicesInfo: { id: string; name: { [lang: string]: string } }[];
+  counterInfo: { id: string; counter_number: number }[];
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -51,7 +52,7 @@ export default function CounterArea({
                 router.push(
                   `${pathname}?${createQueryString(
                     "id",
-                    counter!.id,
+                    counter!.id.toString(),
                     searchParams,
                   )}`,
                 );

@@ -1,8 +1,11 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { addCounter } from "@/lib/actions";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { addCounter } from "@/lib/actions";
+import { createQueryString } from "@/lib/utils";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
@@ -13,13 +16,11 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Separator } from "../ui/separator";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { createQueryString } from "@/lib/utils";
 
 export default function CounterSelect({
   counterInfo,
 }: {
-  counterInfo: { id: string; counterNumber: number }[];
+  counterInfo: { id: string; counter_number: number }[];
 }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -41,7 +42,7 @@ export default function CounterSelect({
             <SelectLabel>Counters</SelectLabel>
             {counterInfo.map((counter) => (
               <SelectItem key={counter.id} value={counter.id}>
-                Counter {counter.counterNumber}
+                Counter {counter.counter_number}
               </SelectItem>
             ))}
             <Separator className="my-1" />

@@ -1,10 +1,11 @@
-import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 export const metadata: Metadata = {
   title: "TMS | Home",
-  description: "Token management system by yours truly",
+  description: "Token management system",
 };
 
 export default function HomePage() {
