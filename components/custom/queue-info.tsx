@@ -34,7 +34,7 @@ export default function QueueInfo() {
       .channel("queue-update-channel")
       .on<QueueItem>(
         "postgres_changes",
-        { event: "*", schema: "public", table: "queueItems" },
+        { event: "*", schema: "public", table: "queue_items" },
         (payload) => {
           console.log("Change received!", payload);
           setQueueItems((oldQueueItems) => {

@@ -9,6 +9,7 @@ import type { Counter, QueueItem, Service } from "./types";
 export const rpc = async (funcName: keyof Database["public"]["Functions"]) => {
   const client = await getServerClient();
   const { error } = await client.rpc(funcName);
+  console.error(error);
 
   return { status: error?.code ?? 200, message: error?.message ?? "Success" };
 };
@@ -138,6 +139,7 @@ export const getAllQueueItems = async () => {
     const { data, error } = await client
       .from("queue_items")
       .select("*")
+      .order("created_at")
       .returns<QueueItem[]>();
 
     if (error) {
