@@ -2,10 +2,11 @@ import ButtonLink from "@/components/custom/button-link";
 import { getChildServices } from "@/lib/utils";
 
 export default async function Service({
-  params: { serviceIds },
+  params,
 }: {
-  params: { serviceIds?: string[] };
+  params: Promise<{ serviceIds?: string[] }>;
 }) {
+  const { serviceIds } = await params;
   const childServices = await getChildServices(
     serviceIds != null ? serviceIds[serviceIds.length - 1] : "",
   );

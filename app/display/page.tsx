@@ -54,25 +54,25 @@ export default function Display() {
           <Card key={counter.id} className="p-8 flex flex-col gap-8">
             <div className="flex flex-col gap-4 justify-center items-center">
               <CardTitle className="text-3xl">
-                Counter {counter.counterNumber}
+                Counter {counter.counter_number}
               </CardTitle>
               <Badge
-                variant={counter.isOpen ? "outline" : "destructive"}
+                variant={counter.is_open ? "outline" : "destructive"}
                 className="w-fit pointer-events-none text-md"
               >
-                {counter.isOpen ? "Open" : "Closed"}
+                {counter.is_open ? "Open" : "Closed"}
               </Badge>
             </div>
             <div
               className={`flex flex-col gap-4 items-center transition-colors duration-300 ${
-                counter.isOpen ? "text-foreground" : "text-muted-foreground/50"
+                counter.is_open ? "text-foreground" : "text-muted-foreground/50"
               }`}
             >
               <p className="font-bold text-5xl tabular-nums">
-                {counter.queueHistory[0]?.queueNumber ?? "#0000"}
+                {counter.queue_history[0]?.queue_number ?? "#0000"}
               </p>
               <p className="text-xl">
-                {counter.queueHistory[0]?.serviceName ?? "-"}
+                {counter.queue_history[0]?.service_name ?? "-"}
               </p>
             </div>
           </Card>
